@@ -1,15 +1,5 @@
 {
-    "name": "@axleshift/core1-server",
-    "version": "1.0.0",
-    "main": "src/index.js",
-    "type": "module",
-    "bugs": {
-        "url": "https://github.com/axleshift/core1/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:axleshift/core1.git"
-    },
+    "private": true,
     "scripts": {
         "production": "concurrently \"npm run env\" \"npm run gemini\" \"npm run prompt\" \"npm run start\"",
         "start": "node src/index",
@@ -24,9 +14,6 @@
         "db:seed": "node src/models/seeders/DatabaseSeeders.js",
         "db:wipe": "node src/models/migration/DatabaseWipe.js"
     },
-    "author": "Axleshift Core 1",
-    "license": "MIT",
-    "description": "",
     "dependencies": {
         "@aws-sdk/client-s3": "^3.758.0",
         "@aws-sdk/lib-storage": "^3.779.0",
@@ -70,9 +57,5 @@
         "nodemon": "^3.1.4",
         "prettier": "^3.3.3",
         "supertest": "^7.0.0"
-    },
-    "engines": {
-        "node": ">=22.x"
-    },
-    "private": true
+    }
 }

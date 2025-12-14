@@ -1,16 +1,5 @@
 {
-    "name": "@axleshift/core1",
-    "version": "1.0.0",
-    "description": "",
-    "bugs": {
-        "url": "https://github.com/axleshift/core1/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:axleshift/core1.git"
-    },
-    "license": "MIT",
-    "author": "Axleshift Core 1",
+    "private": true,
     "scripts": {
         "build": "env-cmd -f ./.env vite build",
         "pretty": "eslint \"src/**/*.jsx\" --fix",
@@ -103,9 +92,5 @@
         "vite": "^6.2.5",
         "vite-plugin-banner": "^0.8.0",
         "vite-plugin-html-minifier": "^1.0.5"
-    },
-    "engines": {
-        "node": ">=22.x"
-    },
-    "private": true
+    }
 }

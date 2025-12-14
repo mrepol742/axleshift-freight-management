@@ -1,28 +1,8 @@
 {
-    "name": "@axlehift/smee",
-    "version": "1.0.0",
-    "main": "src/index.js",
-    "type": "module",
-    "bugs": {
-        "url": "https://github.com/axleshift/core1/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:axleshift/core1.git"
-    },
-    "scripts": {
-        "start": "node src/index"
-    },
-    "author": "Axleshift Core 1",
-    "license": "MIT",
-    "description": "",
-    "dependencies": {
-        "@octokit/webhooks": "^13.4.0",
-        "dotenv": "^16.4.5",
-        "express": "^4.21.2"
-    },
-    "engines": {
-        "node": ">=22.x"
-    },
-    "private": true
+  "private": true,
+  "dependencies": {
+    "@octokit/webhooks": "^13.4.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  }
 }

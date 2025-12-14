@@ -1,16 +1,5 @@
 {
-  "name": "@axleshift/core1",
-  "version": "1.0.0",
-  "description": "",
-  "bugs": {
-    "url": "https://github.com/axleshift/core1/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:axleshift/core1.git"
-  },
-  "license": "MIT",
-  "author": "Axleshift Core 1",
+  "private": true,
   "scripts": {
     "echo": "echo \"im just lazy\"",
     "start": "concurrently \"npm run server\" \"npm run client\"",
@@ -45,10 +34,6 @@
   "devDependencies": {
     "concurrently": "^9.0.1"
   },
-  "engines": {
-    "node": ">=22.x"
-  },
-  "private": true,
   "dependencies": {
     "request": "^2.88.2",
     "yamlparser": "^0.0.2"

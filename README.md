@@ -5,14 +5,9 @@
 [![Terraform CI](https://github.com/mrepol742/axleshift-core1/actions/workflows/terraform.yml/badge.svg)](https://github.com/mrepol742/axleshift-core1/actions/workflows/terraform.yml)
 
 ## Pre-requisites
-- Node.js v23.^
-- Mongodb v8^
-- Redis v7.^
-- Docker
-- Terraform
-- Grafana 
-- PM2 
-- smee
+- Node.js
+- Mongodb v8
+- Redis
 
 ---
 
@@ -117,12 +112,6 @@
 
 ## License
 
-This project is licensed under the **MIT License with Commons Clause**.
+This project is licensed under the [Polyform Noncommercial License 1.0.0](LICENSE).
 
-- **Commercial Use Restriction**: You may not use the software for commercial purposes, as defined in the [LICENSE](LICENSE) file. Commercial use includes using the software as part of any service offered for a fee or any use that generates revenue either directly or indirectly.
-
-See the full [LICENSE](LICENSE) file for more details.
-
-## Disclaimer
-
-This repository was previously part of the "Freight Capstone" GitHub organization. It has since been migrated to the "Axleshift" GitHub organization. Any references to "Freight Capstone" in the codebase, documentation, or related materials should now be understood as referring to "Axleshift."
+&copy; 2025 Melvin Jones Repol.

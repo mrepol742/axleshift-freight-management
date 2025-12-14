@@ -1,26 +1,9 @@
 {
-  "name": "@axleshift/nlp",
-  "version": "1.0.0",
-  "description": "",
-  "bugs": {
-    "url": "https://github.com/axleshift/core1/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:axleshift/core1.git"
-  },
-  "license": "MIT",
-  "author": "Axleshift Core 1",
-  "type": "commonjs",
-  "main": "src/index.js",
+  "private": true,
   "scripts": {
     "build": "node src/index",
     "start": "node test/index"
   },
-  "engines": {
-    "node": ">=22.x"
-  },
-  "private": true,
   "dependencies": {
     "node-nlp": "^5.0.0-alpha.5"
   }
