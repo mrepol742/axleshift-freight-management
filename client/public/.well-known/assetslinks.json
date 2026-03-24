@@ -1,9 +1,0 @@
-[{
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.axleshift.core1",
-      "sha256_cert_fingerprints":
-      ["A4:73:85:57:F2:7C:4D:2C:59:E0:1A:E4:45:8A:27:5E:C6:36:3A:80:9A:03:EC:9D:C7:7B:5B:5E:27:0B:38:9C:BC"]
-    }
-}]

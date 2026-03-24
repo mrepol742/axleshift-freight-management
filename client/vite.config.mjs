@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite'
-import banner from 'vite-plugin-banner'
 import react from '@vitejs/plugin-react'
 import htmlMinifier from 'vite-plugin-html-minifier'
 import path from 'node:path'
@@ -63,12 +62,6 @@ export default defineConfig(() => {
         },
         plugins: [
             react(),
-            banner(
-                `/**
- * © 2025 Melvin Jones Repol & its contributors . All rights reserved.
- * This project is licensed under the MIT License with Commons Clause.
-*/`,
-            ),
             htmlMinifier({
                 collapseWhitespace: true,
                 removeComments: true,

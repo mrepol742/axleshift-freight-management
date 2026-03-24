@@ -1,8 +1,0 @@
-{
-  "private": true,
-  "dependencies": {
-    "@octokit/webhooks": "^13.4.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.2"
-  }
-}
