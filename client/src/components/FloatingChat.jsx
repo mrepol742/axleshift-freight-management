@@ -9,7 +9,11 @@ const FloatingChat = () => {
     const location = useLocation()
 
     useEffect(() => {
-        if (location.pathname === '/customer') setIsOpen(false)
+        const isCustomer = () => {
+            if (location.pathname === '/customer') setIsOpen(false)
+        }
+
+        isCustomer()
     }, [location.pathname])
 
     if (location.pathname === '/customer') return null

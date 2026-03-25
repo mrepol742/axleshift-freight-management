@@ -41,7 +41,7 @@ const FormAddress = ({ data, callback }) => {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload)
         }
-    }, [formData])
+    }, [formData, form])
 
     const handleChange = (section, e) => {
         const { name, value } = e.target

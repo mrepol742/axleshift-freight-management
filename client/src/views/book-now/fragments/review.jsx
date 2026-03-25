@@ -54,6 +54,7 @@ const Review = ({ data, shipmentRef }) => {
     const [totalPages, setTotalPages] = useState(0)
     const [viewForm, setViewForm] = useState(false)
     const [modal, setModal] = useState(false)
+    const [expectedDate, setExpectedDate] = useState('')
 
     const generatePDF = () => {
         pdfRef.current.style.display = 'none'
@@ -135,26 +136,6 @@ const Review = ({ data, shipmentRef }) => {
         form.internal ? handleSubmit('update') : handleSubmit('book')
     }
 
-    const fetchShippingAddress = async (page) => {
-        if (!showModal) return
-        setLoading(true)
-        axios
-            .post(`/addresses/`, { page })
-            .then((response) => {
-                setResult(response.data.data)
-                setTotalPages(response.data.totalPages)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const handleShippingForm = async (address) => {
         setViewForm(false)
         if (form.selected_address !== address._id)
@@ -166,33 +147,13 @@ const Review = ({ data, shipmentRef }) => {
             })
     }
 
-    const fetchAutoFill = async () => {
-        if (form.selected_address) return
-        const recaptcha = await recaptchaRef.current.executeAsync()
-        setLoading(true)
-        axios
-            .post(`/addresses/find/`, {
-                from: form.from[0],
-                to: form.to[0],
-                recaptcha_ref: recaptcha,
-            })
-            .then((response) => {
-                if (!response.data.error)
-                    setForm({
-                        ...form,
-                        to: [response.data.to],
-                        from: [response.data.from],
-                        selected_address: address._id,
-                    })
-            })
-            .finally(() => setLoading(false))
-    }
-
     const handleCancelButton = async () => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         setLoading(true)
         axios
-            .post(`/freight/cancel/${form.tracking_number}`, { recaptcha_ref: recaptcha })
+            .post(`/freight/cancel/${form.tracking_number}`, {
+                recaptcha_ref: recaptcha,
+            })
             .then((response) => {
                 addToast('Shipment has been cancelled.')
                 window.location.reload()
@@ -213,12 +174,64 @@ const Review = ({ data, shipmentRef }) => {
     }
 
     useEffect(() => {
-        fetchShippingAddress(currentPage)
-    }, [showModal, currentPage])
+        const expectedDate = () => {
+            if (form.expected_delivery_date && form.expected_delivery_date !== expectedDate) {
+                setExpectedDate(new Date(form.expected_delivery_date).toDateString())
+            }
+        }
+
+        expectedDate()
+    }, [form.expected_delivery_date, expectedDate])
 
     useEffect(() => {
+        const fetchShippingAddress = async (page) => {
+            if (!showModal) return
+            setLoading(true)
+            axios
+                .post(`/addresses/`, { page })
+                .then((response) => {
+                    setResult(response.data.data)
+                    setTotalPages(response.data.totalPages)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
+        fetchShippingAddress(currentPage)
+    }, [showModal, currentPage, addToast])
+
+    useEffect(() => {
+        const fetchAutoFill = async () => {
+            if (form.selected_address) return
+            const recaptcha = await recaptchaRef.current.executeAsync()
+            setLoading(true)
+            axios
+                .post(`/addresses/find/`, {
+                    from: form.from[0],
+                    to: form.to[0],
+                    recaptcha_ref: recaptcha,
+                })
+                .then((response) => {
+                    if (!response.data.error)
+                        setForm({
+                            ...form,
+                            to: [response.data.to],
+                            from: [response.data.from],
+                            selected_address: address._id,
+                        })
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchAutoFill()
-    }, [])
+    }, [form, setForm])
 
     return (
         <div ref={formRef}>
@@ -311,11 +324,7 @@ const Review = ({ data, shipmentRef }) => {
                         type="text"
                         floatingLabel="Shipment Date"
                         className="mb-2"
-                        value={
-                            form.expected_delivery_date
-                                ? new Date(form.expected_delivery_date).toDateString()
-                                : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toDateString()
-                        }
+                        value={expectedDate}
                         disabled
                     />
                     <CButton
@@ -405,7 +414,11 @@ const Review = ({ data, shipmentRef }) => {
                     <CModalBody>
                         <Form
                             data={{
-                                formData: { from: form.from[0], to: form.to[0], internal: true },
+                                formData: {
+                                    from: form.from[0],
+                                    to: form.to[0],
+                                    internal: true,
+                                },
                                 setFormData: setForm,
                             }}
                             callback={(updatedData) => {

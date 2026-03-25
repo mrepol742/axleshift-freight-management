@@ -85,7 +85,7 @@ const Login = () => {
     useEffect(() => {
         if (cookies.get(VITE_APP_SESSION) !== undefined) return (window.location.href = url)
         setLoading(false)
-    }, [])
+    }, [url])
 
     const generateUUID = () => {
         const array = new Uint8Array(16)

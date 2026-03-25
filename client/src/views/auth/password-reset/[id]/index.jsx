@@ -58,7 +58,11 @@ const ForgotPassword = () => {
     }
 
     const passwordRequirements = [
-        { id: 1, text: 'At least 8 characters', test: (password) => password.length >= 8 },
+        {
+            id: 1,
+            text: 'At least 8 characters',
+            test: (password) => password.length >= 8,
+        },
         {
             id: 2,
             text: 'At least one uppercase letter',
@@ -69,7 +73,11 @@ const ForgotPassword = () => {
             text: 'At least one lowercase letter',
             test: (password) => /[a-z]/.test(password),
         },
-        { id: 4, text: 'At least one number', test: (password) => /[0-9]/.test(password) },
+        {
+            id: 4,
+            text: 'At least one number',
+            test: (password) => /[0-9]/.test(password),
+        },
         {
             id: 5,
             text: 'At least one special character',
@@ -88,47 +96,47 @@ const ForgotPassword = () => {
         checkRequirements(formData.password),
     )
 
-    const verifyPasswordResetToken = async () => {
-        const recaptcha = await recaptchaRef.current.executeAsync()
-        setError({
-            type: '',
-            error: false,
-            message: '',
-        })
-
-        axios
-            .post(`/auth/forgot-password/verify`, {
-                token: id,
-                recaptcha_ref: recaptcha,
+    useEffect(() => {
+        const verifyPasswordResetToken = async () => {
+            const recaptcha = await recaptchaRef.current.executeAsync()
+            setError({
+                type: '',
+                error: false,
+                message: '',
             })
-            .then((response) => {
-                if (response.data.error)
-                    return setError({
+
+            axios
+                .post(`/auth/forgot-password/verify`, {
+                    token: id,
+                    recaptcha_ref: recaptcha,
+                })
+                .then((response) => {
+                    if (response.data.error)
+                        return setError({
+                            type: 'danger',
+                            error: true,
+                            message: response.data.error,
+                        })
+                    setGrantPasswordReset(true)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+
+                    setError({
                         type: 'danger',
                         error: true,
-                        message: response.data.error,
+                        message,
                     })
-                setGrantPasswordReset(true)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-
-                setError({
-                    type: 'danger',
-                    error: true,
-                    message,
                 })
-            })
-            .finally(() => setLoading(false))
-    }
+                .finally(() => setLoading(false))
+        }
 
-    useEffect(() => {
         verifyPasswordResetToken()
-    }, [])
+    }, [id])
 
     const handleSubmit = async (e) => {
         e.preventDefault()

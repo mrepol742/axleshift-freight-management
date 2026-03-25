@@ -86,7 +86,9 @@ const NewAccessToken = () => {
                 if (response.data.error) return addToast(response.data.error)
                 navigate('/security/access-token')
                 setTimeout(() => {
-                    navigate('/security/access-token', { state: { token: response.data.token } })
+                    navigate('/security/access-token', {
+                        state: { token: response.data.token },
+                    })
                 }, 1500)
             })
             .catch((error) => {

@@ -34,7 +34,7 @@ const ForgotPassword = () => {
     useEffect(() => {
         if (cookies.get(VITE_APP_SESSION) !== undefined) return navigate('/dashboard')
         setLoading(false)
-    }, [])
+    }, [navigate])
 
     const handleSubmit = async (e) => {
         e.preventDefault()

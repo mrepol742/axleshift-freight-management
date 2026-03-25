@@ -9,7 +9,7 @@ import Info from './fragments/info'
 const ShipNow = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
-    const shipment = {
+    const [shipment] = useState({
         is_import: false,
         is_residential_address: false,
         contains_danger_goods: false,
@@ -49,7 +49,7 @@ const ShipNow = () => {
         type: 'private',
         items: [],
         status: 'to_pay',
-    }
+    })
     const [form, setForm] = useState(shipment)
 
     useEffect(() => {
@@ -64,7 +64,7 @@ const ShipNow = () => {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload)
         }
-    }, [form])
+    }, [form, shipment])
 
     return (
         <div>

@@ -29,27 +29,27 @@ const Users = () => {
     const [totalPages, setTotalPages] = useState(0)
     const navigate = useNavigate()
 
-    const fetchData = async (page) => {
-        axios
-            .post(`/sec/management/users`, { page })
-            .then((response) => {
-                setResult(response.data.data)
-                setTotalPages(response.data.totalPages)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const fetchData = async (page) => {
+            axios
+                .post(`/sec/management/users`, { page })
+                .then((response) => {
+                    setResult(response.data.data)
+                    setTotalPages(response.data.totalPages)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData(currentPage)
-    }, [currentPage])
+    }, [currentPage, addToast])
 
     const getInitials = (name) => {
         return name ? name.charAt(0).toUpperCase() : ''

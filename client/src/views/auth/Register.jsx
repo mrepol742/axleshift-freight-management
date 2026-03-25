@@ -85,7 +85,7 @@ const Register = () => {
     useEffect(() => {
         if (cookies.get(VITE_APP_SESSION) !== undefined) return (window.location.href = url)
         setLoading(false)
-    }, [])
+    }, [url])
 
     const handleInputChange = (e) => {
         const { id, value } = e.target
@@ -192,7 +192,11 @@ const Register = () => {
     }
 
     const passwordRequirements = [
-        { id: 1, text: 'At least 8 characters', test: (password) => password.length >= 8 },
+        {
+            id: 1,
+            text: 'At least 8 characters',
+            test: (password) => password.length >= 8,
+        },
         {
             id: 2,
             text: 'At least one uppercase letter',
@@ -203,7 +207,11 @@ const Register = () => {
             text: 'At least one lowercase letter',
             test: (password) => /[a-z]/.test(password),
         },
-        { id: 4, text: 'At least one number', test: (password) => /[0-9]/.test(password) },
+        {
+            id: 4,
+            text: 'At least one number',
+            test: (password) => /[0-9]/.test(password),
+        },
         {
             id: 5,
             text: 'At least one special character',

@@ -123,9 +123,9 @@ export const getSession = async (req, sessionToken) => {
         const now = Date.now()
         if (now - cachedSession.last_accessed > 60 * 1000) {
             cachedSession.last_accessed = now
-            ;(cachedSession.ip_address = getClientIp(req)),
+            ;((cachedSession.ip_address = getClientIp(req)),
                 (cachedSession.user_agent = req.headers['user-agent'] || 'unknown'),
-                setCache(`internal-${sessionToken}`, cachedSession)
+                setCache(`internal-${sessionToken}`, cachedSession))
         }
         return cachedSession
     } catch (e) {

@@ -36,24 +36,6 @@ const API = () => {
     const location = useLocation()
     const token = location.state?.token
 
-    const fetchData = async (page) => {
-        axios
-            .post(`/auth/token/`, { page })
-            .then((response) => {
-                setResult(response.data.data)
-                setTotalPages(response.data.totalPages)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const deleteModal = (token) => {
         setDeleteToken(token)
         setModal(true)
@@ -64,7 +46,10 @@ const API = () => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         setLoading(true)
         axios
-            .post(`/auth/token/delete`, { id: deleteToken._id, recaptcha_ref: recaptcha })
+            .post(`/auth/token/delete`, {
+                id: deleteToken._id,
+                recaptcha_ref: recaptcha,
+            })
             .then((response) => fetchData(1))
             .catch((error) => {
                 const message =
@@ -78,8 +63,26 @@ const API = () => {
     }
 
     useEffect(() => {
+        const fetchData = async (page) => {
+            axios
+                .post(`/auth/token/`, { page })
+                .then((response) => {
+                    setResult(response.data.data)
+                    setTotalPages(response.data.totalPages)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData(currentPage)
-    }, [currentPage])
+    }, [currentPage, addToast])
 
     if (loading)
         return (

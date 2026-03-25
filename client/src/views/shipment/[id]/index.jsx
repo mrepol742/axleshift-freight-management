@@ -46,17 +46,6 @@ const FreightInfo = () => {
         }))
     }
 
-    const fetchData = async () => {
-        axios
-            .get(`/freight/${id}`)
-            .then((response) => setForm({ ...response.data, internal: true }))
-            .catch((error) => {
-                console.error(error)
-                setError(true)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const handleQRDownload = () => {
         setShowQR(false)
         html2canvas(svgRef.current, { useCORS: true }).then((canvas) => {
@@ -72,8 +61,19 @@ const FreightInfo = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/freight/${id}`)
+                .then((response) => setForm({ ...response.data, internal: true }))
+                .catch((error) => {
+                    console.error(error)
+                    setError(true)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [id])
 
     if (loading)
         return (

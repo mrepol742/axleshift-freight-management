@@ -27,28 +27,36 @@ const DefaultLayout = () => {
     const { addNotif } = useNotif()
     const [visibleModals, setVisibleModals] = useState({})
     const { user } = useUserProvider()
+    const [isPasswordExpired, setPasswordExpired] = useState(false)
 
     const handleClose = (id) => {
         setVisibleModals((prev) => ({ ...prev, [id]: false }))
     }
 
-    const fetchNotifications = async () => {
-        try {
-            const response = await axios.get('/notifications')
-            response.data.forEach((notif) => addNotif(notif))
-        } catch (error) {
-            console.error('Error fetching notifications:', error)
-        }
-    }
-
     useEffect(() => {
         if (!user._id) return
+
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get('/notifications')
+                response.data.forEach((notif) => addNotif(notif))
+            } catch (error) {
+                console.error('Error fetching notifications:', error)
+            }
+        }
         fetchNotifications()
+
+        const password = () => {
+            if (user.password_changed_on) {
+                setPasswordExpired(Date.now() - user.password_changed_on > 90 * 24 * 60 * 60 * 1000)
+            }
+        }
+        password()
         Notification.requestPermission().then((permission) => {
             if (permission !== 'granted')
                 addToast('Please allow notifications to receive updates', 'Notification')
         })
-    }, [user])
+    }, [user, addToast, addNotif])
 
     return (
         <div>
@@ -111,36 +119,31 @@ const DefaultLayout = () => {
                 </div>
             )}
             {/* 90 Days */}
-            {user.password_changed_on &&
-                Date.now() - user.password_changed_on > 90 * 24 * 60 * 60 * 1000 &&
-                window.location.pathname !== '/account/security' && (
-                    <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 2050 }}>
-                        <CModal
-                            backdrop="static"
-                            alignment="center"
-                            scrollable
-                            visible={true}
-                            onClose={() => handleClose('password')}
-                            aria-labelledby="password"
-                        >
-                            <CModalHeader>
-                                <CModalTitle id="password">Password Change Required</CModalTitle>
-                            </CModalHeader>
-                            <CModalBody>
-                                Your password has not been changed in a while. Please consider
-                                changing it.
-                            </CModalBody>
-                            <CModalFooter>
-                                <CButton
-                                    color="success"
-                                    onClick={() => navigate(`/account/security`)}
-                                >
-                                    Change Password
-                                </CButton>
-                            </CModalFooter>
-                        </CModal>
-                    </div>
-                )}
+            {isPasswordExpired && window.location.pathname !== '/account/security' && (
+                <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 2050 }}>
+                    <CModal
+                        backdrop="static"
+                        alignment="center"
+                        scrollable
+                        visible={true}
+                        onClose={() => handleClose('password')}
+                        aria-labelledby="password"
+                    >
+                        <CModalHeader>
+                            <CModalTitle id="password">Password Change Required</CModalTitle>
+                        </CModalHeader>
+                        <CModalBody>
+                            Your password has not been changed in a while. Please consider changing
+                            it.
+                        </CModalBody>
+                        <CModalFooter>
+                            <CButton color="success" onClick={() => navigate(`/account/security`)}>
+                                Change Password
+                            </CButton>
+                        </CModalFooter>
+                    </CModal>
+                </div>
+            )}
         </div>
     )
 }

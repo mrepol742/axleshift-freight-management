@@ -45,7 +45,7 @@ const MessageBox = ({
             setMessagesNew(msgs)
         })
         return () => unsubscribe()
-    }, [selectedUser])
+    }, [selectedUser, messagesRef, user.ref])
 
     useEffect(() => {
         if (messageA.current) messageA.current.scrollIntoView({ behavior: 'smooth' })

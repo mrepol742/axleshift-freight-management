@@ -48,7 +48,6 @@ export default defineConfig(() => {
             loader: 'jsx',
             include: /src\/.*\.jsx?$/,
             exclude: [],
-            target: 'esnext',
         },
         optimizeDeps: {
             force: true,

@@ -17,43 +17,49 @@ const Messages = ({ float, isOpen, setIsOpen }) => {
     const messagesRef = collection(database, 'messages')
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search)
-        const ref = urlParams.get('ref')
-        if (!user._id) return
-        if (user && !selectedUser && user.role === 'user')
-            return setselectedUser({ sender_id: user.ref })
-        setLoading(true)
-        if (ref) setselectedUser({ sender_id: ref })
-        const unsubscribe = onSnapshot(query(messagesRef, orderBy('timestamp')), (snapshot) => {
-            let latestMessagesMap = new Map()
-            let thread = []
+        if (!user) return
 
-            snapshot.docs.reverse().forEach((doc) => {
-                const msg = { id: doc.id, ...doc.data() }
+        function getThreads() {
+            const urlParams = new URLSearchParams(window.location.search)
+            const ref = urlParams.get('ref')
+            if (!user._id) return
+            if (user && !selectedUser && user.role === 'user')
+                return setselectedUser({ sender_id: user.ref })
+            setLoading(true)
+            if (ref) setselectedUser({ sender_id: ref })
+            return onSnapshot(query(messagesRef, orderBy('timestamp')), (snapshot) => {
+                let latestMessagesMap = new Map()
+                let thread = []
 
-                if (!thread.includes(msg.sender_id) || (ref && msg.sender_id === ref)) {
-                    latestMessagesMap.set(msg.sender_id, msg)
-                    thread.push(msg.sender_id)
-                }
-            })
+                snapshot.docs.reverse().forEach((doc) => {
+                    const msg = { id: doc.id, ...doc.data() }
 
-            if (ref && !thread.includes(ref)) {
-                const addition = new Map()
-                addition.set(ref, {
-                    id: ref,
-                    sender_id: ref,
-                    message: '',
-                    role: 'user',
-                    timestamp: Date.now(),
+                    if (!thread.includes(msg.sender_id) || (ref && msg.sender_id === ref)) {
+                        latestMessagesMap.set(msg.sender_id, msg)
+                        thread.push(msg.sender_id)
+                    }
                 })
-                latestMessagesMap = new Map([...addition, ...latestMessagesMap])
-            }
 
-            // i need coffeeeeeeeeee
-            const latestMessagesArray = Array.from(latestMessagesMap.values())
-            setThreadsID(latestMessagesArray)
-            setLoading(false)
-        })
+                if (ref && !thread.includes(ref)) {
+                    const addition = new Map()
+                    addition.set(ref, {
+                        id: ref,
+                        sender_id: ref,
+                        message: '',
+                        role: 'user',
+                        timestamp: Date.now(),
+                    })
+                    latestMessagesMap = new Map([...addition, ...latestMessagesMap])
+                }
+
+                // i need coffeeeeeeeeee
+                const latestMessagesArray = Array.from(latestMessagesMap.values())
+                setThreadsID(latestMessagesArray)
+                setLoading(false)
+            })
+        }
+
+        const unsubscribe = getThreads()
 
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768)
@@ -62,9 +68,10 @@ const Messages = ({ float, isOpen, setIsOpen }) => {
         checkMobile()
         window.addEventListener('resize', checkMobile)
         return () => {
-            window.removeEventListener('resize', checkMobile), unsubscribe()
+            window.removeEventListener('resize', checkMobile)
+            if (unsubscribe) unsubscribe()
         }
-    }, [user])
+    }, [user, messagesRef, selectedUser])
 
     const handleSelectUser = (patient) => {
         setselectedUser(patient)

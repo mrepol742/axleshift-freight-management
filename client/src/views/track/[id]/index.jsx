@@ -16,16 +16,6 @@ const TrackInfo = () => {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const fetchData = async () => {
-        axios
-            .get(`/track/${id}`)
-            .then((response) => {
-                setResponseData(response.data)
-            })
-            .catch((error) => setError(true))
-            .finally(() => setLoading(false))
-    }
-
     const getStatus = (status) => {
         if (status === 'cancelled') return 'Cancelled'
         if (status === 'received') return 'Received'
@@ -36,8 +26,18 @@ const TrackInfo = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/track/${id}`)
+                .then((response) => {
+                    setResponseData(response.data)
+                })
+                .catch((error) => setError(true))
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [id])
 
     if (loading)
         return (

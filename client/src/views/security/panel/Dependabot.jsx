@@ -22,24 +22,24 @@ const Dependabot = () => {
     const [loading, setLoading] = useState(true)
     const [result, setResult] = useState([])
 
-    const fetchData = async () => {
-        axios
-            .get(`/sec/management/dependabot`)
-            .then((response) => setResult(response.data))
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/sec/management/dependabot`)
+                .then((response) => setResult(response.data))
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [addToast])
 
     if (loading)
         return (

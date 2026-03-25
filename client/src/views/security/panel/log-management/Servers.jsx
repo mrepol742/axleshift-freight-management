@@ -14,27 +14,27 @@ const Server = () => {
     const [totalPages, setTotalPages] = useState(0)
     const [query, setQuery] = useState('')
 
-    const fetchLogs = async (page) => {
-        axios
-            .post(`/sec/management/server-logs`, { page })
-            .then((response) => {
-                setLogs(response.data.data)
-                setTotalPages(response.data.totalPages)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const fetchLogs = async (page) => {
+            axios
+                .post(`/sec/management/server-logs`, { page })
+                .then((response) => {
+                    setLogs(response.data.data)
+                    setTotalPages(response.data.totalPages)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchLogs(currentPage)
-    }, [currentPage])
+    }, [currentPage, addToast])
 
     return (
         <div>

@@ -35,53 +35,24 @@ import {
 } from './panel/index'
 
 const SecurityManagement = () => {
-    const [activeItemKey, setActiveItemKey] = useState(0)
-    const [loading, setLoading] = useState(true)
+    const tabMap = {
+        users: 0,
+        sessions: 1,
+        dependabot: 2,
+        sentry: 3,
+        accountLogs: 4,
+        maintenance: 5,
+        'ip-filtering': 6,
+        geo: 7,
+    }
     const navigate = useNavigate()
-    const tab = window.location.hash ? window.location.hash.substring(1) : ''
+    const tab = window.location.hash ? window.location.hash.substring(1) : 'users'
+    const [activeItemKey, setActiveItemKey] = useState(tabMap[tab] ?? 0)
 
     const handleTabChange = (itemKey, tabName) => {
         setActiveItemKey(itemKey)
         navigate(`#${tabName}`)
     }
-
-    useEffect(() => {
-        if (!tab && tab.length == 0) handleTabChange(0, 'users')
-        switch (tab) {
-            case 'users':
-                setActiveItemKey(0)
-                break
-            case 'sessions':
-                setActiveItemKey(1)
-                break
-            case 'dependabot':
-                setActiveItemKey(2)
-                break
-            case 'sentry':
-                setActiveItemKey(3)
-                break
-            case 'accountLogs':
-                setActiveItemKey(4)
-                break
-            case 'maintenance':
-                setActiveItemKey(5)
-                break
-            case 'ip-filtering':
-                setActiveItemKey(6)
-                break
-            case 'geo':
-                setActiveItemKey(7)
-                break
-        }
-        setLoading(false)
-    }, [tab])
-
-    if (loading)
-        return (
-            <div className="loading-overlay">
-                <CSpinner color="primary" variant="grow" />
-            </div>
-        )
 
     return (
         <div>

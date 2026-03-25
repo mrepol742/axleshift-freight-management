@@ -34,29 +34,29 @@ const AppAuth = () => {
     if (window.location.pathname != '/')
         loc = `/login?n=${window.location.pathname}${window.location.search}`
 
-    const checkAuthentication = async () => {
-        if (VITE_APP_NODE_ENV === 'production')
-            ReactGA.send({ hitType: 'pageview', page: window.location.pathname })
-        if (!token) return setIsAuth(false)
-        if (user && Object.keys(user).length > 0) return setIsAuth(true)
-
-        axios
-            .post(`/auth/verify`, null)
-            .then((response) => {
-                setUser(response.data)
-            })
-            .catch((err) => {
-                if (err.status == 403) return setForbidden(true)
-                if (err.status == 503) return setMaintenance(true)
-                if (!err.response) return setServerErr(true)
-                window.location.href = loc
-            })
-            .finally(() => setIsAuth(true))
-    }
-
     useEffect(() => {
+        const checkAuthentication = async () => {
+            if (VITE_APP_NODE_ENV === 'production')
+                ReactGA.send({ hitType: 'pageview', page: window.location.pathname })
+            if (!token) return setIsAuth(false)
+            if (user && Object.keys(user).length > 0) return setIsAuth(true)
+
+            axios
+                .post(`/auth/verify`, null)
+                .then((response) => {
+                    setUser(response.data)
+                })
+                .catch((err) => {
+                    if (err.status == 403) return setForbidden(true)
+                    if (err.status == 503) return setMaintenance(true)
+                    if (!err.response) return setServerErr(true)
+                    window.location.href = loc
+                })
+                .finally(() => setIsAuth(true))
+        }
+
         checkAuthentication()
-    }, [])
+    }, [loc, setUser, token, user])
 
     if (isAuth === null)
         return (

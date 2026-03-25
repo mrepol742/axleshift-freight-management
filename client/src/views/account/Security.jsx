@@ -75,7 +75,11 @@ const Security = () => {
     }
 
     const passwordRequirements = [
-        { id: 1, text: 'At least 8 characters', test: (password) => password.length >= 8 },
+        {
+            id: 1,
+            text: 'At least 8 characters',
+            test: (password) => password.length >= 8,
+        },
         {
             id: 2,
             text: 'At least one uppercase letter',
@@ -86,7 +90,11 @@ const Security = () => {
             text: 'At least one lowercase letter',
             test: (password) => /[a-z]/.test(password),
         },
-        { id: 4, text: 'At least one number', test: (password) => /[0-9]/.test(password) },
+        {
+            id: 4,
+            text: 'At least one number',
+            test: (password) => /[0-9]/.test(password),
+        },
         {
             id: 5,
             text: 'At least one special character',

@@ -66,14 +66,18 @@ const Email = () => {
     }
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search)
-        const email = urlParams.get('email')
-        if (email)
-            setFormData({
-                email: email,
-                subject: '',
-                message: '',
-            })
+        function resetEmail() {
+            const urlParams = new URLSearchParams(window.location.search)
+            const email = urlParams.get('email')
+            if (email)
+                setFormData({
+                    email: email,
+                    subject: '',
+                    message: '',
+                })
+        }
+
+        resetEmail()
     }, [])
 
     if (loading)

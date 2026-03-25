@@ -13,7 +13,7 @@ const View = () => {
 
     useEffect(() => {
         if (!address) navigate('/my-addresses')
-    }, [address])
+    }, [address, navigate])
 
     return (
         <div>

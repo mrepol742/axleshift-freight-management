@@ -10,44 +10,6 @@ const Callback = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
-    const fetchData = async (code) => {
-        if (!navigator.geolocation)
-            setError({
-                error: true,
-                message: 'Geolocation is not supported by this browser. Login failed!',
-            })
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                microsoft(code, {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                })
-            },
-            (error) => {
-                let errorMessage
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage = 'We need your location to continue.'
-                        break
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage = 'Location information is unavailable.'
-                        break
-                    case error.TIMEOUT:
-                        errorMessage = 'Timeout occurred while getting your location.'
-                        break
-                    default:
-                        errorMessage = 'An unknown error occurred. Please try again later.'
-                }
-                setError({
-                    error: true,
-                    message: errorMessage,
-                })
-                return true
-            },
-        )
-    }
-
     const microsoft = async (code, location) => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         axios
@@ -78,8 +40,46 @@ const Callback = () => {
 
         if (!code) navigate('/dashboard')
 
+        const fetchData = async (code) => {
+            if (!navigator.geolocation)
+                setError({
+                    error: true,
+                    message: 'Geolocation is not supported by this browser. Login failed!',
+                })
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    microsoft(code, {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    })
+                },
+                (error) => {
+                    let errorMessage
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'We need your location to continue.'
+                            break
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information is unavailable.'
+                            break
+                        case error.TIMEOUT:
+                            errorMessage = 'Timeout occurred while getting your location.'
+                            break
+                        default:
+                            errorMessage = 'An unknown error occurred. Please try again later.'
+                    }
+                    setError({
+                        error: true,
+                        message: errorMessage,
+                    })
+                    return true
+                },
+            )
+        }
+
         fetchData(code)
-    }, [])
+    }, [navigate])
 
     return (
         <div className="bg-dark min-vh-100 d-flex flex-row align-items-center">

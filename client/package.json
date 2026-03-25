@@ -1,5 +1,6 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "build": "env-cmd -f ./.env vite build",
         "pretty": "eslint \"src/**/*.jsx\" --fix",

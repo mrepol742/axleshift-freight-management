@@ -15,7 +15,7 @@ const AppDocumentTitle = ({ children }) => {
     useEffect(() => {
         let routeName = getRouteName(currentLocation, routes)
         if (routeName) document.title = routeName + ' | Axleshift'
-    }, [currentLocation, routes])
+    }, [currentLocation])
 
     return <>{children}</>
 }

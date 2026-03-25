@@ -11,7 +11,7 @@ const Freight = () => {
 
     useEffect(() => {
         navigate('/security/management')
-    }, [])
+    }, [navigate])
     return ''
 }
 

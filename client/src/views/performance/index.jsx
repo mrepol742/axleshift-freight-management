@@ -32,59 +32,6 @@ const Dashboard = () => {
         return count === 0 ? 0 : sum / count
     }
 
-    const fetchData = async () => {
-        axios
-            .get(`/metrics/prometheus`)
-            .then((response) => {
-                const data = response.data
-                calculateAverageLoad(
-                    parseFloat(data.process_cpu_user_seconds_total[0].value),
-                    parseFloat(data.process_cpu_system_seconds_total[0].value),
-                    parseFloat(data.process_cpu_seconds_total[0].value),
-                    parseFloat(data.process_start_time_seconds[0].value),
-                )
-                setCpuUsageData((prevData) => [
-                    ...prevData,
-                    parseFloat(data.process_cpu_seconds_total[0].value.toFixed(2)),
-                ])
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-        axios
-            .get(`/metrics/mongodb`)
-            .then((response) => {
-                setMongoDb(response.data)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-        axios
-            .get(`/metrics/redis`)
-            .then((response) => {
-                setRedis(response.data)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     function formatTTL(ms) {
         if (ms <= 0 || isNaN(ms)) return '0 ms'
 
@@ -102,6 +49,59 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/metrics/prometheus`)
+                .then((response) => {
+                    const data = response.data
+                    calculateAverageLoad(
+                        parseFloat(data.process_cpu_user_seconds_total[0].value),
+                        parseFloat(data.process_cpu_system_seconds_total[0].value),
+                        parseFloat(data.process_cpu_seconds_total[0].value),
+                        parseFloat(data.process_start_time_seconds[0].value),
+                    )
+                    setCpuUsageData((prevData) => [
+                        ...prevData,
+                        parseFloat(data.process_cpu_seconds_total[0].value.toFixed(2)),
+                    ])
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+            axios
+                .get(`/metrics/mongodb`)
+                .then((response) => {
+                    setMongoDb(response.data)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+            axios
+                .get(`/metrics/redis`)
+                .then((response) => {
+                    setRedis(response.data)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
 
         const intervalId = setInterval(() => {
@@ -109,7 +109,7 @@ const Dashboard = () => {
         }, 5000)
 
         return () => clearInterval(intervalId)
-    }, [])
+    }, [addToast])
 
     if (loading) return ''
 

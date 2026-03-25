@@ -32,24 +32,24 @@ const Schedules = () => {
         cookies.get('showDaysOfWeek') === 'true' || cookies.get('showDaysOfWeek') === undefined,
     )
 
-    const fetchData = async () => {
-        axios
-            .get(`/freight/calendar`)
-            .then((response) => setResult(response.data))
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/freight/calendar`)
+                .then((response) => setResult(response.data))
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [addToast])
 
     const [currentDate, setCurrentDate] = useState(moment())
 

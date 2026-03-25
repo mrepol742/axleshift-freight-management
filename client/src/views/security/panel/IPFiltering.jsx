@@ -31,25 +31,6 @@ const IPFiltering = () => {
     const [ipListCopy, setIpListCopy] = useState([])
     const [modal, setModal] = useState(false)
 
-    const fetchData = async () => {
-        axios
-            .get(`/sec/management/ip-filtering`)
-            .then((response) => {
-                setState(response.data.filter_mode)
-                setIpList(response.data.ip.map((ip) => ({ ip, checked: false })))
-                setIpListCopy(response.data.ip.map((ip) => ({ ip, checked: false })))
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const saveData = async () => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         setLoading(true)
@@ -76,8 +57,27 @@ const IPFiltering = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/sec/management/ip-filtering`)
+                .then((response) => {
+                    setState(response.data.filter_mode)
+                    setIpList(response.data.ip.map((ip) => ({ ip, checked: false })))
+                    setIpListCopy(response.data.ip.map((ip) => ({ ip, checked: false })))
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [addToast])
 
     const handleAddIp = () => {
         setIpList([...ipList, { ip: '', checked: false }])

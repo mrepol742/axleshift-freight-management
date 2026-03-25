@@ -26,23 +26,6 @@ const Webhooks = () => {
     const [WebhooksLocationListCopy, setWebhooksLocationListCopy] = useState([])
     const [modal, setModal] = useState(false)
 
-    const fetchData = async () => {
-        axios
-            .get(`/sec/webhooks`)
-            .then((response) => {
-                setWebhooksLocationList(response.data)
-                setWebhooksLocationListCopy(response.data)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    error.message ||
-                    'Server is offline or restarting please wait'
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const saveData = async () => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         setLoading(true)
@@ -64,8 +47,25 @@ const Webhooks = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/sec/webhooks`)
+                .then((response) => {
+                    setWebhooksLocationList(response.data)
+                    setWebhooksLocationListCopy(response.data)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        error.message ||
+                        'Server is offline or restarting please wait'
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [addToast])
 
     const handleAddWebhooks = () => {
         setWebhooksLocationList([...WebhooksLocationList, { url: '', checked: false }])

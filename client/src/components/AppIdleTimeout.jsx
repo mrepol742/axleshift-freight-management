@@ -21,56 +21,49 @@ const AppIdleTimeout = ({ children }) => {
     const COUNTDOWN_TIME = 30
     const [isIdle, setIsIdle] = useState(false)
     const [countdown, setCountdown] = useState(COUNTDOWN_TIME)
-    let timeout, countdownInterval
+    const timeoutRef = useRef(null)
+    const intervalRef = useRef(null)
 
-    const resetTimer = useCallback(() => {
-        clearTimeout(timeout)
-        clearInterval(countdownInterval)
-        setIsIdle(false)
-        setCountdown(COUNTDOWN_TIME)
-
-        timeout = setTimeout(() => {
-            setIsIdle(true)
-            startCountdown()
-        }, IDLE_TIMEOUT)
-    }, [])
-
-    const startCountdown = () => {
-        countdownInterval = setInterval(() => {
+    const startCountdown = useCallback(() => {
+        intervalRef.current = setInterval(() => {
             setCountdown((prev) => {
-                if (prev === 1) {
-                    clearInterval(countdownInterval)
-                    logout()
+                if (prev <= 1) {
+                    clearInterval(intervalRef.current)
+                    window.location.href = '/logout'
                     return 0
                 }
                 return prev - 1
             })
         }, 1000)
-    }
-
-    const logout = () => {
-        window.location.href = '/logout'
-    }
-
-    const time = () => {
-        if (!user.role) return
-        resetTimer()
-        window.addEventListener('mousemove', resetTimer)
-        window.addEventListener('keydown', resetTimer)
-        window.addEventListener('click', resetTimer)
-    }
+    }, [])
 
     useEffect(() => {
-        time()
+        const resetTimer = () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
+            if (intervalRef.current) clearInterval(intervalRef.current)
+
+            setIsIdle(false)
+            setCountdown(countdown)
+
+            timeoutRef.current = setTimeout(() => {
+                setIsIdle(true)
+                startCountdown()
+            }, IDLE_TIMEOUT)
+        }
+
+        resetTimer()
+
+        const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart']
+        const resetOnActivity = () => resetTimer()
+
+        events.forEach((e) => window.addEventListener(e, resetOnActivity))
 
         return () => {
-            clearTimeout(timeout)
-            clearInterval(countdownInterval)
-            window.removeEventListener('mousemove', resetTimer)
-            window.removeEventListener('keydown', resetTimer)
-            window.removeEventListener('click', resetTimer)
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
+            if (intervalRef.current) clearInterval(intervalRef.current)
+            events.forEach((e) => window.removeEventListener(e, resetOnActivity))
         }
-    }, [resetTimer])
+    }, [IDLE_TIMEOUT, countdown, startCountdown])
 
     return (
         <div>

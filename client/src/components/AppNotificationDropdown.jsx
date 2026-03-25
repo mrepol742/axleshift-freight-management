@@ -18,7 +18,11 @@ const AppNotificationDropdown = () => {
     const [hasUnread, setHasUnread] = useState(false)
 
     useEffect(() => {
-        setHasUnread(notifs.some((notif) => !notif.is_read))
+        const unread = () => {
+            setHasUnread(notifs.some((notif) => !notif.is_read))
+        }
+
+        unread()
     }, [notifs])
 
     const markAllAsRead = async () => {

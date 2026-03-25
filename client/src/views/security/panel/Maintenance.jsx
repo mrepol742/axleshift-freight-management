@@ -13,21 +13,6 @@ const Maintenance = () => {
     const [loading, setLoading] = useState(true)
     const [maintenance, setMaintenance] = useState('off')
 
-    const fetchData = async () => {
-        axios
-            .get(`/sec/management/maintenance`)
-            .then((response) => setMaintenance(response.data.mode))
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const saveData = async () => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         setLoading(true)
@@ -53,8 +38,23 @@ const Maintenance = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/sec/management/maintenance`)
+                .then((response) => setMaintenance(response.data.mode))
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [addToast])
 
     if (loading)
         return (

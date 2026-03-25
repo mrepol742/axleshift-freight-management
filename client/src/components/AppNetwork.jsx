@@ -20,7 +20,13 @@ const AppNetwork = () => {
     return (
         <div>
             {!isOnline && (
-                <div style={{ padding: '1rem', backgroundColor: '#f8d7da', color: '#721c24' }}>
+                <div
+                    style={{
+                        padding: '1rem',
+                        backgroundColor: '#f8d7da',
+                        color: '#721c24',
+                    }}
+                >
                     🚫 You are offline. Please connect to internet.
                 </div>
             )}

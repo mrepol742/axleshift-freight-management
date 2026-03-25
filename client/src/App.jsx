@@ -26,22 +26,23 @@ const App = () => {
     const enableBody = (target) => enableBodyScroll(target)
     const [disableKeyboardNavigation] = ['esc']
 
-    const init = () => {
-        const urlParams = new URLSearchParams(window.location.href.split('?')[1])
-        const theme = urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
-        if (theme) {
-            dispatch({ type: 'set', theme: theme })
-            setColorMode(theme)
-            return
+    useEffect(() => {
+        const init = () => {
+            const urlParams = new URLSearchParams(window.location.href.split('?')[1])
+            const theme =
+                urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
+            if (theme) {
+                dispatch({ type: 'set', theme: theme })
+                setColorMode(theme)
+                return
+            }
+
+            if (isColorModeSet()) return dispatch({ type: 'set', theme: colorMode })
+            setColorMode(storedTheme)
         }
 
-        if (isColorModeSet()) return dispatch({ type: 'set', theme: colorMode })
-        setColorMode(storedTheme)
-    }
-
-    useEffect(() => {
         init()
-    }, [])
+    }, [colorMode, dispatch, isColorModeSet, setColorMode, storedTheme])
 
     return (
         <TourProvider

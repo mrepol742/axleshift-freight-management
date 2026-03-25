@@ -41,54 +41,61 @@ const Reports = () => {
     const { addToast } = useToast()
     const navigate = useNavigate()
 
-    const fetchData = async (page, export_type = null) => {
-        setLoading(true)
-        axios
-            .post(`/freight/deep-search`, { page, ...filters, export_type })
-            .then((response) => {
-                const contentType = response.headers['content-type']
-                if (
-                    [
-                        'text/csv',
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    ].includes(contentType)
-                ) {
-                    const blob = new Blob([response.data], { type: contentType })
-                    const url = window.URL.createObjectURL(blob)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download =
-                        new Date().toDateString() +
-                        ' Freight Report' +
-                        '.' +
-                        (contentType === 'text/csv' ? 'csv' : 'xlsx')
-                    document.body.appendChild(a)
-                    a.click()
-                    document.body.removeChild(a)
-                    return
-                }
-                const filteredData = filters.invoiceStatus
-                    ? response.data.data.filter(
-                          (item) => item.invoice?.status === filters.invoiceStatus,
-                      )
-                    : response.data.data
-                setData(filteredData)
-                setTotalPages(Math.ceil(filteredData.length / response.data.pageSize))
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
+    const fetchData = useCallback(
+        async (page, export_type = null) => {
+            setLoading(true)
+            axios
+                .post(`/freight/deep-search`, { page, ...filters, export_type })
+                .then((response) => {
+                    const contentType = response.headers['content-type']
+                    if (
+                        [
+                            'text/csv',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        ].includes(contentType)
+                    ) {
+                        const blob = new Blob([response.data], { type: contentType })
+                        const url = window.URL.createObjectURL(blob)
+                        const a = document.createElement('a')
+                        a.href = url
+                        a.download =
+                            new Date().toDateString() +
+                            ' Freight Report' +
+                            '.' +
+                            (contentType === 'text/csv' ? 'csv' : 'xlsx')
+                        document.body.appendChild(a)
+                        a.click()
+                        document.body.removeChild(a)
+                        return
+                    }
+                    const filteredData = filters.invoiceStatus
+                        ? response.data.data.filter(
+                              (item) => item.invoice?.status === filters.invoiceStatus,
+                          )
+                        : response.data.data
+                    setData(filteredData)
+                    setTotalPages(Math.ceil(filteredData.length / response.data.pageSize))
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        },
+        [addToast, filters],
+    )
 
     useEffect(() => {
-        fetchData(currentPage)
-    }, [currentPage])
+        const loadData = async () => {
+            await fetchData(currentPage)
+        }
+
+        loadData()
+    }, [currentPage, fetchData])
 
     const handleFilterChange = (key, value) => {
         setFilters((prev) => ({ ...prev, [key]: value }))
@@ -135,7 +142,14 @@ const Reports = () => {
                     <CSpinner color="primary" variant="grow" />
                 </div>
             )}
-            <div style={{ marginBottom: '20px', display: 'flex', gap: '6px', overflowY: 'auto' }}>
+            <div
+                style={{
+                    marginBottom: '20px',
+                    display: 'flex',
+                    gap: '6px',
+                    overflowY: 'auto',
+                }}
+            >
                 <CFormLabel>Start Date:</CFormLabel>
                 <CFormInput
                     type="date"

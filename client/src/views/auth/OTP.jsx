@@ -30,33 +30,33 @@ const OTP = () => {
     const navigate = useNavigate()
     const recaptchaRef = React.useRef()
 
-    const checkAuthentication = async () => {
-        if (token === undefined) return navigate('/login')
-
-        axios
-            .post(`/auth/verify`, null)
-            .then((response) => {
-                if (!response.data.otp) return navigate('/dashboard')
-                setEmail(response.data.email)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-
-                setError({
-                    error: true,
-                    message,
-                })
-            })
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const checkAuthentication = async () => {
+            if (token === undefined) return navigate('/login')
+
+            axios
+                .post(`/auth/verify`, null)
+                .then((response) => {
+                    if (!response.data.otp) return navigate('/dashboard')
+                    setEmail(response.data.email)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+
+                    setError({
+                        error: true,
+                        message,
+                    })
+                })
+                .finally(() => setLoading(false))
+        }
+
         checkAuthentication()
-    }, [navigate])
+    }, [navigate, token])
 
     const handleChange = (e, index) => {
         const value = e.target.value.replace(/[^0-9]/g, '')

@@ -31,25 +31,6 @@ const GEO = () => {
     const [geoLocationListCopy, setGeoLocationListCopy] = useState([])
     const [modal, setModal] = useState(false)
 
-    const fetchData = async () => {
-        axios
-            .get(`/sec/management/geo`)
-            .then((response) => {
-                setState(response.data.filter_mode)
-                setGeoLocationList(response.data.geo.map((geo) => ({ geo, checked: false })))
-                setGeoLocationListCopy(response.data.geo.map((geo) => ({ geo, checked: false })))
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     const saveData = async () => {
         const recaptcha = await recaptchaRef.current.executeAsync()
         setLoading(true)
@@ -76,8 +57,28 @@ const GEO = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/sec/management/geo`)
+                .then((response) => {
+                    setState(response.data.filter_mode)
+                    setGeoLocationList(response.data.geo.map((geo) => ({ geo, checked: false })))
+                    setGeoLocationListCopy(
+                        response.data.geo.map((geo) => ({ geo, checked: false })),
+                    )
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
         fetchData()
-    }, [])
+    }, [addToast])
 
     const handleAddGeo = () => {
         setGeoLocationList([...geoLocationList, { geo: [], checked: false }])

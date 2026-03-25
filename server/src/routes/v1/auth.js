@@ -368,7 +368,7 @@ router.post('/upload', [auth, upload.single('profile_pic')], async (req, res) =>
                 if (!req.user.avatar) return
                 const db = await database()
                 const usersCollection = db.collection('users')
-                remCache(`user-id-${req.user._id}`),
+                ;(remCache(`user-id-${req.user._id}`),
                     usersCollection.updateOne(
                         { _id: new ObjectId(req.user._id) },
                         {
@@ -377,7 +377,7 @@ router.post('/upload', [auth, upload.single('profile_pic')], async (req, res) =>
                                 updated_at: Date.now(),
                             },
                         },
-                    )
+                    ))
             })(),
         ])
         return res.status(200).json()

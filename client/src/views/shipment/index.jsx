@@ -25,27 +25,34 @@ const Dashboard = () => {
     const { addToast } = useToast()
     const navigate = useNavigate()
 
-    const fetchData = async (page) => {
-        axios
-            .post(`/freight`, { page })
-            .then((response) => {
-                setData(response.data.data)
-                setTotalPages(response.data.totalPages)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
+    const fetchData = useCallback(
+        async (page) => {
+            axios
+                .post(`/freight`, { page })
+                .then((response) => {
+                    setData(response.data.data)
+                    setTotalPages(response.data.totalPages)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        },
+        [addToast],
+    )
 
     useEffect(() => {
-        fetchData(currentPage)
-    }, [currentPage])
+        const loadData = async () => {
+            await fetchData(currentPage)
+        }
+
+        loadData()
+    }, [currentPage, fetchData])
 
     if (loading)
         return (

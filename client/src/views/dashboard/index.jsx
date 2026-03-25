@@ -127,45 +127,45 @@ const Dashboard = () => {
             })
     }
 
-    const fetchInsights = async () => {
-        const fetchData = async () => {
-            try {
-                const shipmetOvertime = fetch('/insights/shipment-overtime').then((data) =>
-                    setInsights((prev) => ({ ...prev, shipmetOvertime: data })),
-                )
-                const costOvertime = fetch('/insights/cost-overtime').then((data) =>
-                    setInsights((prev) => ({ ...prev, costOvertime: data })),
-                )
-                const itemsOvertime = fetch('/insights/items-overtime').then((data) =>
-                    setInsights((prev) => ({ ...prev, itemsOvertime: data })),
-                )
-                const weightOvertime = fetch('/insights/weight-overtime').then((data) =>
-                    setInsights((prev) => ({ ...prev, weightOvertime: data })),
-                )
-                const smallDetailWidgets = fetch('/insights/shipment-info-widgets').then((data) =>
-                    setInsights((prev) => ({ ...prev, smallDetailWidgets: data })),
-                )
-                const invoicesInfoWidgets = fetch('/insights/invoices-info-widgets').then((data) =>
-                    setInsights((prev) => ({ ...prev, invoicesInfoWidgets: data })),
-                )
+    useEffect(() => {
+        const fetchInsights = async () => {
+            const fetchData = async () => {
+                try {
+                    const shipmetOvertime = fetch('/insights/shipment-overtime').then((data) =>
+                        setInsights((prev) => ({ ...prev, shipmetOvertime: data })),
+                    )
+                    const costOvertime = fetch('/insights/cost-overtime').then((data) =>
+                        setInsights((prev) => ({ ...prev, costOvertime: data })),
+                    )
+                    const itemsOvertime = fetch('/insights/items-overtime').then((data) =>
+                        setInsights((prev) => ({ ...prev, itemsOvertime: data })),
+                    )
+                    const weightOvertime = fetch('/insights/weight-overtime').then((data) =>
+                        setInsights((prev) => ({ ...prev, weightOvertime: data })),
+                    )
+                    const smallDetailWidgets = fetch('/insights/shipment-info-widgets').then(
+                        (data) => setInsights((prev) => ({ ...prev, smallDetailWidgets: data })),
+                    )
+                    const invoicesInfoWidgets = fetch('/insights/invoices-info-widgets').then(
+                        (data) => setInsights((prev) => ({ ...prev, invoicesInfoWidgets: data })),
+                    )
 
-                await Promise.all([
-                    shipmetOvertime,
-                    costOvertime,
-                    itemsOvertime,
-                    weightOvertime,
-                    smallDetailWidgets,
-                    invoicesInfoWidgets,
-                ])
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error)
+                    await Promise.all([
+                        shipmetOvertime,
+                        costOvertime,
+                        itemsOvertime,
+                        weightOvertime,
+                        smallDetailWidgets,
+                        invoicesInfoWidgets,
+                    ])
+                } catch (error) {
+                    console.error('Error fetching dashboard data:', error)
+                }
             }
+
+            fetchData()
         }
 
-        fetchData()
-    }
-
-    useEffect(() => {
         fetchInsights()
 
         const intervalId = setInterval(() => {

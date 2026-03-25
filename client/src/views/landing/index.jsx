@@ -10,7 +10,7 @@ const Landing = () => {
         if (cookies.get(VITE_APP_SESSION)) return navigate('/dashboard')
         if (VITE_APP_NODE_ENV !== 'development') window.location.href = 'https://axleshift.com'
         window.location.href = '/login'
-    }, [])
+    }, [navigate])
 
     return (
         <div className="wrapper d-flex flex-column min-vh-100">

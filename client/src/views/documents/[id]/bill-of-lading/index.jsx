@@ -79,21 +79,21 @@ const BillOfLading = () => {
             .catch((error) => console.error('Error generating PDF:', error))
     }
 
-    const fetchData = async () => {
-        try {
-            const [freightResponse] = await Promise.all([axios.get(`/freight/${id}`)])
-            setFormData(freightResponse.data)
-        } catch (error) {
-            console.error(error)
-            setError(true)
-        } finally {
-            setLoading(false)
-        }
-    }
-
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [freightResponse] = await Promise.all([axios.get(`/freight/${id}`)])
+                setFormData(freightResponse.data)
+            } catch (error) {
+                console.error(error)
+                setError(true)
+            } finally {
+                setLoading(false)
+            }
+        }
+
         fetchData()
-    }, [])
+    }, [id])
 
     if (loading)
         return (

@@ -46,7 +46,7 @@ const Document = () => {
         const file = event.target.files[0]
         if (file && file.size > 25 * 1024 * 1024) {
             addToast('File size exceeds 25MB limit. Please upload a smaller file.')
-            e.target.value = null
+            event.target.value = null
             return
         }
         if (file) {
@@ -89,16 +89,6 @@ const Document = () => {
             .finally(() => setLoading(false))
     }
 
-    const fetchDocuments = async () => {
-        axios
-            .get(`/documents/${id}`)
-            .then((response) => {
-                setDocuments(response.data.documents)
-                setFile(response.data.documents.filter((doc) => doc.status !== 'generated'))
-            })
-            .finally(() => setLoading(false))
-    }
-
     const previewDocument = (id, file) => {
         if (/bill-of-lading-AX-[0-9]/.test(file)) return navigate(`/documents/${id}/bill-of-lading`)
         setIsActionVisible(true)
@@ -124,7 +114,9 @@ const Document = () => {
     const handleRequireCOOEL = async () => {
         setLoading(true)
         axios
-            .post(`/documents/cooel/${id}`, { is_enabled: file.length > 0 ? false : true })
+            .post(`/documents/cooel/${id}`, {
+                is_enabled: file.length > 0 ? false : true,
+            })
             .then((response) => {
                 if (response.data.error) return addToast(response.data.error)
                 setDocuments(response.data.data)
@@ -146,8 +138,18 @@ const Document = () => {
     }
 
     useEffect(() => {
+        const fetchDocuments = async () => {
+            axios
+                .get(`/documents/${id}`)
+                .then((response) => {
+                    setDocuments(response.data.documents)
+                    setFile(response.data.documents.filter((doc) => doc.status !== 'generated'))
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchDocuments()
-    }, [])
+    }, [id])
 
     if (loading)
         return (

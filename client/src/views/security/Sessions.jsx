@@ -84,27 +84,27 @@ const Sessions = () => {
             .finally(() => setLoading(false))
     }
 
-    const fetchData = async (page) => {
-        axios
-            .post(`/sec/sessions`, { page })
-            .then((response) => {
-                setResult(response.data.data)
-                setTotalPages(response.data.totalPages)
-            })
-            .catch((error) => {
-                const message =
-                    error.response?.data?.error ||
-                    (error.message === 'network error'
-                        ? 'Server is offline or restarting please wait'
-                        : error.message)
-                addToast(message)
-            })
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const fetchData = async (page) => {
+            axios
+                .post(`/sec/sessions`, { page })
+                .then((response) => {
+                    setResult(response.data.data)
+                    setTotalPages(response.data.totalPages)
+                })
+                .catch((error) => {
+                    const message =
+                        error.response?.data?.error ||
+                        (error.message === 'network error'
+                            ? 'Server is offline or restarting please wait'
+                            : error.message)
+                    addToast(message)
+                })
+                .finally(() => setLoading(false))
+        }
+
         fetchData(currentPage)
-    }, [currentPage])
+    }, [currentPage, addToast])
 
     if (loading)
         return (

@@ -69,16 +69,16 @@ const Receipt = () => {
             })
     }
 
-    const fetchData = async () => {
-        axios
-            .get(`/invoices/${id}`)
-            .then((response) => setData(response.data))
-            .finally(() => setLoading(false))
-    }
-
     useEffect(() => {
+        const fetchData = async () => {
+            axios
+                .get(`/invoices/${id}`)
+                .then((response) => setData(response.data))
+                .finally(() => setLoading(false))
+        }
+
         fetchData()
-    }, [])
+    }, [id])
 
     if (loading)
         return (
