@@ -8,8 +8,8 @@ const Landing = () => {
 
     useEffect(() => {
         if (cookies.get(VITE_APP_SESSION)) return navigate('/dashboard')
-        if (VITE_APP_NODE_ENV !== 'development') window.location.href = 'https://axleshift.com'
-        window.location.href = '/login'
+        if (VITE_APP_NODE_ENV !== 'development') navigate('https://axleshift.com')
+        navigate('/login')
     }, [navigate])
 
     return (
