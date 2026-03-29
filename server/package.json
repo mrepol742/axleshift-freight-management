@@ -1,5 +1,6 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "production": "concurrently \"npm run env\" \"npm run gemini\" \"npm run prompt\" \"npm run start\"",
         "start": "node src/index",

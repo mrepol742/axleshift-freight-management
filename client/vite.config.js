@@ -51,11 +51,9 @@ export default defineConfig(() => {
         },
         optimizeDeps: {
             force: true,
-            esbuildOptions: {
-                treeShaking: true,
-                minify: true,
-                loader: {
-                    '.js': 'jsx',
+            rolldownOptions: {
+                moduleTypes: {
+                    '*.jsx': 'js',
                 },
             },
         },
