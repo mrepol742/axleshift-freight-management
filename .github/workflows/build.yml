@@ -12,6 +12,10 @@ jobs:
   client-build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: client
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -23,7 +27,6 @@ jobs:
 
       - name: Set up environment
         run: |
-          cd client
           echo "VITE_APP_API_URL=${{ secrets.APP_API_URL }}" >> .env
           echo "VITE_APP_RECAPTCHA_SITE_KEY=${{ secrets.APP_RECAPTCHA_SITE_KEY }}" >> .env
           echo "VITE_APP_SESSION=${{ secrets.APP_SESSION }}" >> .env
@@ -48,17 +51,21 @@ jobs:
           npm ci
 
       - name: Executing lint test
-        run: npm run prettier
+        run: npm run pretty
 
       - name: Executing jest & mocha
         run: npm run test
 
       - name: Build frontend
-        run: cd client && npm run build
+        run: npm run build
 
 
   server-build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
 
     steps:
       - name: Clone repository
@@ -81,7 +88,6 @@ jobs:
 
       - name: Set up environment
         run: |
-          cd server
           echo "MONGO_DB=core1" >> .env
           echo "MONGO_URL=mongodb://localhost:27017" >> .env
           echo "RECAPTCHA_SECRET=${{ secrets.EXPRESS_RECAPTCHA_SECRET }}" >> .env
@@ -91,7 +97,7 @@ jobs:
           npm ci
 
       - name: Executing lint test
-        run: npm run prettier
+        run: npm run pretty
 
       - name: Executing jest & mocha
         run: npm run test

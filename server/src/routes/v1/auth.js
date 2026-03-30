@@ -249,7 +249,6 @@ router.post('/user', [recaptcha, auth], async (req, res, next) => {
         })
     } catch (e) {
       logger.error(e)
-      console.error(e)
     }
     res.status(500).json({ error: 'Internal server error' })
 })
