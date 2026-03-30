@@ -11,7 +11,7 @@ import { RECAPTCHA_SECRET } from '../config.js'
  * @return {Promise<void>}
  */
 const recaptcha = async (req, res, next) => {
-    const { recaptcha_ref } = req.body
+    const { recaptcha_ref } = req.body || {}
     if (!recaptcha_ref) return res.status(400).json({ error: 'Invalid request' })
 
     try {

@@ -1,16 +1,17 @@
 name: Build CI
 
-# this thing will be executed in fork!
 on:
-    push:
-        branches: ["main"]
-    workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request_target:
+    branches: ["main"]
+  workflow_dispatch:
 
 jobs:
-  build:
 
-    runs-on: 'ubuntu-latest'
-    
+  client-build:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
@@ -19,16 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.11.0
-        with:
-          mongodb-version: 'latest'
-        
-      - name: Start Redis
-        uses: supercharge/redis-github-action@1.7.0
-        with:
-          redis-version: 7
 
       - name: Set up environment
         run: |
@@ -51,60 +42,56 @@ jobs:
           echo "VITE_APP_FIREBASE_MEASUREMENT_ID=${{ secrets.APP_FIREBASE_MEASUREMENT_ID }}" >> .env
           echo "VITE_APP_AWS_S3=${{ secrets.APP_AWS_S3 }}" >> .env
           echo "VITE_APP_MICROSOFT_OAUTH_CLIENT_ID=${{ secrets.APP_MICROSOFT_OAUTH_CLIENT_ID }}" >> .env
-          cd ../server
-          echo "MONGO_DB=core1" >> .env
-          echo "MONGO_URL=mongodb://localhost:27017" >> .env
-          echo "RECAPTCHA_SECRET=${{ secrets.EXPRESS_RECAPTCHA_SECRET }}" >> .env
-        
+
       - name: Install dependencies
         run: |
           npm ci
-          npm run setup
 
       - name: Executing lint test
         run: npm run prettier
-      
+
       - name: Executing jest & mocha
         run: npm run test
 
       - name: Build frontend
         run: cd client && npm run build
 
-      - name: Build backend
-        run: |
-          mkdir -p server/.github/workflows
-          cp .github/workflows/docker.yml server/.github/workflows/
-          cp .github/workflows/terraform.yml server/.github/workflows/
 
-      - name: Get latest commit hash
-        run: |
-          echo "MASTER_COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "COMMIT_URL=https://github.com/${{ github.repository }}/commit/$(git rev-parse HEAD)" >> $GITHUB_ENV
+  server-build:
+    runs-on: ubuntu-latest
 
-      - name: Push frontend
-        id: push_directory_frontend
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          source-directory: client/build
-          destination-github-username: 'mrepol742'
-          destination-repository-name: 'axleshift-core1'
-          user-name: github-actions[bot]
-          user-email: github-actions[bot]@users.noreply.github.com
-          commit-message: "Build from ${{ env.COMMIT_URL }}"
-          target-branch: core1-frontend
+          node-version: 22
 
-      - name: Push backend
-        id: push_directory_backend
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.11.0
         with:
-          source-directory: server/
-          destination-github-username: 'mrepol742'
-          destination-repository-name: 'axleshift-core1'
-          user-name: github-actions[bot]
-          user-email: github-actions[bot]@users.noreply.github.com
-          commit-message: "Build from ${{ env.COMMIT_URL }}"
-          target-branch: core1-backend
+          mongodb-version: 'latest'
+
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.7.0
+        with:
+          redis-version: 7
+
+      - name: Set up environment
+        run: |
+          cd server
+          echo "MONGO_DB=core1" >> .env
+          echo "MONGO_URL=mongodb://localhost:27017" >> .env
+          echo "RECAPTCHA_SECRET=${{ secrets.EXPRESS_RECAPTCHA_SECRET }}" >> .env
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Executing lint test
+        run: npm run prettier
+
+      - name: Executing jest & mocha
+        run: npm run test
