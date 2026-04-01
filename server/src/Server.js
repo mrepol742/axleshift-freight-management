@@ -1,6 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import pinoHttp from 'pino-http'
 import mongoSanitize from 'express-mongo-sanitize'
 import helmet from 'helmet'
 import compression from 'compression'
@@ -28,7 +27,6 @@ app.use((req, res, next) => {
 app.use(compression())
 app.use(rateLimiter)
 app.use(IPAddressFilter)
-app.use(pinoHttp({ logger }))
 
 app.get('/', (req, res) => res.redirect(301, REACT_APP_URL))
 // refer to /routes/v1/index

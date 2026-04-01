@@ -54,3 +54,5 @@ crash.log
 .prompt.json
 test.js
 test1.js
+
+/logs
