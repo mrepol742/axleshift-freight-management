@@ -1,5 +1,5 @@
 name: Label PR
-on: 
+on:
   pull_request_target:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        repository: "freight-capstone/core1"
+        repository: "mrepol742/axleshift-freight-management"
     - uses: actions/labeler@v5
       with:
         repo-token: "${{ secrets.API_TOKEN_GITHUB }}"
